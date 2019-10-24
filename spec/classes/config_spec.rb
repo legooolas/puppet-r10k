@@ -99,14 +99,42 @@ describe 'r10k::config', type: :class do
         it { is_expected.to contain_file('r10k.yaml').with_content(%r{^.*:postrun: \[\"/usr/bin/curl\", \"-F\", \"deploy=done\", \"http://my-app\.site/endpoint\"\]\n.*$}) }
       end
 
-      context 'with empty cachedir' do
+      context 'with empty proxy' do
         let :params do
           {
-            cachedir: ''
+            proxy: :undef
           }
         end
 
-        it { is_expected.to contain_file('r10k.yaml').without_content(%r{^:cachedir: .*$}) }
+        it { is_expected.to contain_file('r10k.yaml').without_content(%r{^:proxy: .*$}) }
+      end
+      context 'with proxy' do
+        let :params do
+          {
+            proxy: 'https://proxy.local:8080'
+          }
+        end
+
+        it { is_expected.to contain_file('r10k.yaml').with_content(%r{^:proxy: https://proxy.local:8080$}) }
+      end
+
+      context 'with empty pool_size' do
+        let :params do
+          {
+            pool_size: :undef
+          }
+        end
+
+        it { is_expected.to contain_file('r10k.yaml').without_content(%r{^:pool_size: .*$}) }
+      end
+      context 'with pool_size' do
+        let :params do
+          {
+            pool_size: 5
+          }
+        end
+
+        it { is_expected.to contain_file('r10k.yaml').with_content(%r{^:pool_size: 5$}) }
       end
     end
   end

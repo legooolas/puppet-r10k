@@ -21,11 +21,12 @@ class r10k (
   Hash $forge_settings                                        = $r10k::params::forge_settings,
   Hash $deploy_settings                                       = $r10k::params::deploy_settings,
   $root_user                                                  = $r10k::params::root_user,
+  Optional[String[1]] $proxy                                  = $r10k::params::proxy,
+  Optional[Integer[1]] $pool_size                             = $r10k::params::pool_size,
   $root_group                                                 = $r10k::params::root_group,
   $postrun                                                    = undef,
   Boolean $include_prerun_command                             = false,
   Boolean $include_postrun_command                            = false,
-  Boolean $install_gcc                                        = false,
 ) inherits r10k::params {
 
   # Check if user is declaring both classes
@@ -37,14 +38,14 @@ class r10k (
   }
 
   if $include_prerun_command {
-    include ::r10k::prerun_command
+    include r10k::prerun_command
   }
 
   if $include_postrun_command {
-    include ::r10k::postrun_command
+    include r10k::postrun_command
   }
 
-  class { '::r10k::install':
+  class { 'r10k::install':
     install_options        => $install_options,
     keywords               => $gentoo_keywords,
     manage_ruby_dependency => $manage_ruby_dependency,
@@ -52,10 +53,9 @@ class r10k (
     provider               => $provider,
     version                => $version,
     puppet_master          => $puppet_master,
-    install_gcc            => $install_gcc,
   }
 
-  class { '::r10k::config':
+  class { 'r10k::config':
     cachedir                  => $cachedir,
     configfile                => $configfile,
     sources                   => $sources,
@@ -71,9 +71,11 @@ class r10k (
     postrun                   => $postrun,
     root_user                 => $root_user,
     root_group                => $root_group,
+    proxy                     => $proxy,
+    pool_size                 => $pool_size,
   }
 
   if $mcollective {
-    class { '::r10k::mcollective': }
+    class { 'r10k::mcollective': }
   }
 }

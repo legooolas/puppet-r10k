@@ -21,6 +21,12 @@
 #   Location of symlink that points to configfile. Default: /etc/r10k.yaml
 # * [*forge_settings*]
 #   Hash containing settings for downloading modules from the Puppet Forge.
+# * [*proxy*]
+#   String containing proxy setting for r10k.yaml.
+#   Default: undef
+# * [*pool_size*]
+#   Integer defining how many threads should be spawn while updating modules. Only available for r10k >= 3.3.0.
+#   Default: undef
 #
 # === Examples
 #
@@ -62,6 +68,8 @@ class r10k::config (
   $root_user                                = $r10k::params::root_user,
   $root_group                               = $r10k::params::root_group,
   Stdlib::Absolutepath $puppetconf_path     = $r10k::params::puppetconf_path,
+  Optional[String[1]] $proxy                = $r10k::params::proxy,
+  Optional[Integer[1]] $pool_size           = $r10k::params::pool_size,
   String $r10k_yaml_template                = 'r10k/r10k.yaml.erb',
 ) inherits r10k::params {
 

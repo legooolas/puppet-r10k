@@ -4,7 +4,90 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
-## [v6.6.0](https://github.com/voxpupuli/puppet-r10k/tree/v6.6.0) (2018-07-06)
+## [v7.0.0](https://github.com/voxpupuli/puppet-r10k/tree/v7.0.0) (2019-06-18)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-r10k/compare/v6.8.0...v7.0.0)
+
+**Breaking changes:**
+
+- modulesync 2.7.0 and drop puppet 4 [\#482](https://github.com/voxpupuli/puppet-r10k/pull/482) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- \(Feature\) webhook should support github secrets [\#102](https://github.com/voxpupuli/puppet-r10k/issues/102)
+- Add support for proxy settings [\#487](https://github.com/voxpupuli/puppet-r10k/pull/487) ([dhoppe](https://github.com/dhoppe))
+- Adding BitBucket Server secret support. [\#464](https://github.com/voxpupuli/puppet-r10k/pull/464) ([venushka](https://github.com/venushka))
+
+**Closed issues:**
+
+- webhook swallowing r10k error messages [\#472](https://github.com/voxpupuli/puppet-r10k/issues/472)
+- support the "proxy" general setting [\#468](https://github.com/voxpupuli/puppet-r10k/issues/468)
+- \(Feature\) webhook should support BitBucket server's secrets [\#463](https://github.com/voxpupuli/puppet-r10k/issues/463)
+- Using exec in run\_command replaces process and skips notify\_\* calls [\#441](https://github.com/voxpupuli/puppet-r10k/issues/441)
+- Acceptance tests failing with permissions error: [\#346](https://github.com/voxpupuli/puppet-r10k/issues/346)
+- failing beaker tests [\#310](https://github.com/voxpupuli/puppet-r10k/issues/310)
+
+**Merged pull requests:**
+
+- Wrap slack\_icon with colons [\#495](https://github.com/voxpupuli/puppet-r10k/pull/495) ([0x6d617474](https://github.com/0x6d617474))
+- Remove support for providers yum, zypper [\#489](https://github.com/voxpupuli/puppet-r10k/pull/489) ([dhoppe](https://github.com/dhoppe))
+- Allow `puppetlabs/stdlib` 6.x [\#486](https://github.com/voxpupuli/puppet-r10k/pull/486) ([alexjfisher](https://github.com/alexjfisher))
+- Webhook improvements [\#485](https://github.com/voxpupuli/puppet-r10k/pull/485) ([0x6d617474](https://github.com/0x6d617474))
+- Convert mocha to rspec-mocks [\#484](https://github.com/voxpupuli/puppet-r10k/pull/484) ([dhoppe](https://github.com/dhoppe))
+- Allow puppetlabs/inifile 3.x [\#483](https://github.com/voxpupuli/puppet-r10k/pull/483) ([dhoppe](https://github.com/dhoppe))
+- Unify docs [\#481](https://github.com/voxpupuli/puppet-r10k/pull/481) ([DavidS](https://github.com/DavidS))
+- Remove Gentoo/portage related code as is it not supported. [\#480](https://github.com/voxpupuli/puppet-r10k/pull/480) ([ghoneycutt](https://github.com/ghoneycutt))
+- Acceptance tests run requests in parallel commented [\#470](https://github.com/voxpupuli/puppet-r10k/pull/470) ([Dan33l](https://github.com/Dan33l))
+
+## [v6.8.0](https://github.com/voxpupuli/puppet-r10k/tree/v6.8.0) (2018-12-23)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-r10k/compare/v6.7.0...v6.8.0)
+
+**Implemented enhancements:**
+
+- Update r10k path in example `prefix\_command.rb` [\#467](https://github.com/voxpupuli/puppet-r10k/pull/467) ([alexjfisher](https://github.com/alexjfisher))
+- Identify branch name from BitBucket server native webhook payload [\#462](https://github.com/voxpupuli/puppet-r10k/pull/462) ([venushka](https://github.com/venushka))
+
+**Closed issues:**
+
+- don't pin sinatra and webrick gems anymore [\#471](https://github.com/voxpupuli/puppet-r10k/issues/471)
+
+**Merged pull requests:**
+
+- set webrick and sinatra versions to 'installed' [\#475](https://github.com/voxpupuli/puppet-r10k/pull/475) ([kenyon](https://github.com/kenyon))
+- enable acceptance tests [\#469](https://github.com/voxpupuli/puppet-r10k/pull/469) ([Dan33l](https://github.com/Dan33l))
+- Remove gcc and make dependencies [\#465](https://github.com/voxpupuli/puppet-r10k/pull/465) ([Rudikza](https://github.com/Rudikza))
+
+## [v6.7.0](https://github.com/voxpupuli/puppet-r10k/tree/v6.7.0) (2018-10-13)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-r10k/compare/v6.6.1...v6.7.0)
+
+**Implemented enhancements:**
+
+- Allow usage of OS r10k packages [\#453](https://github.com/voxpupuli/puppet-r10k/pull/453) ([tuxmea](https://github.com/tuxmea))
+
+**Fixed bugs:**
+
+- Handle environment name normalized by r10k [\#452](https://github.com/voxpupuli/puppet-r10k/pull/452) ([sapakt](https://github.com/sapakt))
+
+**Merged pull requests:**
+
+- allow puppet 6.x [\#454](https://github.com/voxpupuli/puppet-r10k/pull/454) ([bastelfreak](https://github.com/bastelfreak))
+- allow puppetlabs/stdlib 5.x [\#450](https://github.com/voxpupuli/puppet-r10k/pull/450) ([bastelfreak](https://github.com/bastelfreak))
+
+## [v6.6.1](https://github.com/voxpupuli/puppet-r10k/tree/v6.6.1) (2018-07-29)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-r10k/compare/v6.6.0...v6.6.1)
+
+**Fixed bugs:**
+
+- Notify rocketchat in rescue of deploy environments [\#446](https://github.com/voxpupuli/puppet-r10k/pull/446) ([amateo](https://github.com/amateo))
+
+**Closed issues:**
+
+- Support BitBucket server's new webhook [\#436](https://github.com/voxpupuli/puppet-r10k/issues/436)
+
+## [v6.6.0](https://github.com/voxpupuli/puppet-r10k/tree/v6.6.0) (2018-07-05)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-r10k/compare/v6.5.1...v6.6.0)
 
@@ -198,6 +281,7 @@ These should not affect the functionality of the module.
 - Use styleguide compliant syntax for sshkey example. [\#353](https://github.com/voxpupuli/puppet-r10k/pull/353) ([kallies](https://github.com/kallies))
 - Fix webhook slack\_username parameter handling [\#350](https://github.com/voxpupuli/puppet-r10k/pull/350) ([alexbrett](https://github.com/alexbrett))
 - Webhook Background mode [\#349](https://github.com/voxpupuli/puppet-r10k/pull/349) ([luckyraul](https://github.com/luckyraul))
+- Cleanup webhook use case notes; specifically PE/FOSS split. [\#338](https://github.com/voxpupuli/puppet-r10k/pull/338) ([rnelson0](https://github.com/rnelson0))
 
 ## [v5.0.0](https://github.com/voxpupuli/puppet-r10k/tree/v5.0.0) (2017-03-07)
 
@@ -212,7 +296,6 @@ These should not affect the functionality of the module.
 - r10k.yaml contents indentation is incorrect [\#345](https://github.com/voxpupuli/puppet-r10k/pull/345) ([Kotty666](https://github.com/Kotty666))
 - Update yaml location for \>PE3 [\#343](https://github.com/voxpupuli/puppet-r10k/pull/343) ([rnelson0](https://github.com/rnelson0))
 - replace all validate functions with datatypes [\#341](https://github.com/voxpupuli/puppet-r10k/pull/341) ([bastelfreak](https://github.com/bastelfreak))
-- Cleanup webhook use case notes; specifically PE/FOSS split. [\#338](https://github.com/voxpupuli/puppet-r10k/pull/338) ([rnelson0](https://github.com/rnelson0))
 - Remove support for Puppet 3 and Ruby \<2.0.0 [\#321](https://github.com/voxpupuli/puppet-r10k/pull/321) ([rnelson0](https://github.com/rnelson0))
 - Ensure webhook run folder exists on redhat systemd environments [\#283](https://github.com/voxpupuli/puppet-r10k/pull/283) ([luisfdez](https://github.com/luisfdez))
 
@@ -282,9 +365,9 @@ These should not affect the functionality of the module.
 
 - Rename CHANGELOG.md [\#301](https://github.com/voxpupuli/puppet-r10k/pull/301) ([rnelson0](https://github.com/rnelson0))
 - Fixes Puppet 4 path for webhook [\#295](https://github.com/voxpupuli/puppet-r10k/pull/295) ([andrewwippler](https://github.com/andrewwippler))
-- Update config\_version.sh [\#291](https://github.com/voxpupuli/puppet-r10k/pull/291) ([seanscottking](https://github.com/seanscottking))
+- Update config\_version.sh [\#291](https://github.com/voxpupuli/puppet-r10k/pull/291) ([solsglasses](https://github.com/solsglasses))
 - Fix testing [\#288](https://github.com/voxpupuli/puppet-r10k/pull/288) ([ghoneycutt](https://github.com/ghoneycutt))
-- Duplicate certpath key [\#287](https://github.com/voxpupuli/puppet-r10k/pull/287) ([seanscottking](https://github.com/seanscottking))
+- Duplicate certpath key [\#287](https://github.com/voxpupuli/puppet-r10k/pull/287) ([solsglasses](https://github.com/solsglasses))
 - unbreak on OS where root group != 'root' [\#279](https://github.com/voxpupuli/puppet-r10k/pull/279) ([buzzdeee](https://github.com/buzzdeee))
 - Add support for custom permissions and ownership of webhooks.yaml [\#278](https://github.com/voxpupuli/puppet-r10k/pull/278) ([elconas](https://github.com/elconas))
 - add curl example to readme [\#274](https://github.com/voxpupuli/puppet-r10k/pull/274) ([jessereynolds](https://github.com/jessereynolds))
@@ -956,4 +1039,4 @@ These should not affect the functionality of the module.
 
 
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*

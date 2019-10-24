@@ -9,6 +9,8 @@ class r10k::params
   $install_options        = []
   $sources                = undef
   $puppet_master          = true
+  $proxy                  = undef
+  $pool_size              = undef
 
   if 'puppet_environment' in $facts {
     $r10k_basedir            = $facts['puppet_environmentpath']
@@ -60,7 +62,7 @@ class r10k::params
     $is_pe_server      = false
   }
 
-  if getvar('::pe_server_version') {
+  if fact('pe_server_version') {
     # PE 4 or greater specific settings
     # r10k configuration
 
@@ -82,7 +84,7 @@ class r10k::params
     $root_user                     = 'root'
     $root_group                    = 'root'
   }
-  elsif versioncmp("${::puppetversion}", '4.0.0') >= 0 { #lint:ignore:only_variable_string
+  elsif versioncmp($facts['puppetversion'], '4.0.0') >= 0 {
     #FOSS 4 or greater specific settings
     # r10k configuration
 
@@ -105,7 +107,7 @@ class r10k::params
     $root_group                    = 'root'
   }
   else {
-    fail("Puppet version ${::puppetversion} is no longer supported. Please use an earlier version of puppet/r10k.")
+    fail("Puppet version ${facts['puppetversion']} is no longer supported. Please use an earlier version of puppet/r10k.")
   }
 
   # prerun_command in puppet.conf
@@ -131,6 +133,7 @@ class r10k::params
   $webhook_protected             = true
   $webhook_background            = true
   $webhook_github_secret         = undef
+  $webhook_bitbucket_secret      = undef
   $webhook_discovery_timeout     = 10
   $webhook_client_timeout        = 120
   $webhook_prefix                = false         # ':repo' | ':user' | ':command' (or true for backwards compatibility) | 'string' | false
@@ -149,6 +152,7 @@ class r10k::params
   $webhook_slack_channel         = undef
   $webhook_slack_username        = undef
   $webhook_slack_proxy_url       = undef
+  $webhook_slack_icon            = undef
   $webhook_rocketchat_webhook    = undef
   $webhook_rocketchat_channel    = undef
   $webhook_rocketchat_username   = undef
@@ -157,22 +161,25 @@ class r10k::params
   $webhook_configfile_mode       = '0644'
   $webhook_ignore_environments   = []
   $webhook_mco_arguments         = undef
-  $webhook_sinatra_version       = '~> 1.0'      # Sinatra 2 requires rack 2 which in turn requires ruby 2.2. Puppet 4 AIO ships with ruby 2.1
-  $webhook_webrick_version       = '1.3.1'       # Webrick 1.4 requires ruby >= 2.3
+  if $facts['pe_server_version'] == '2016.4.2' {
+    $webhook_sinatra_version       = '~> 1.0'
+  } else {
+    $webhook_sinatra_version       = 'installed'
+  }
+  $webhook_webrick_version       = 'installed'
   $webhook_generate_types        = false
 
-  # Service Settings for SystemD in EL7
-  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease == '7' {
-    $webhook_service_file     = '/usr/lib/systemd/system/webhook.service'
-    $webhook_service_template = 'webhook.redhat.service.erb'
-  } elsif $::osfamily == 'Gentoo' {
-    $webhook_service_file     = '/etc/init.d/webhook'
-    $webhook_service_template = 'webhook.init.gentoo.erb'
-  } elsif $::osfamily == 'Suse' and $::operatingsystemrelease >= '12' { #lint:ignore:version_comparison
-    $webhook_service_file     = '/etc/systemd/system/webhook.service'
-    $webhook_service_template = 'webhook.suse.service.erb'
+  if $facts['os']['family'] == 'Gentoo' {
+    $webhook_service_file      = '/etc/init.d/webhook'
+    $webhook_service_template  = 'webhook.init.gentoo.erb'
+    $webhook_service_file_mode = '0755'
+  } elsif $facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] < '7' {
+    $webhook_service_file      = '/etc/init.d/webhook'
+    $webhook_service_template  = 'webhook.init.erb'
+    $webhook_service_file_mode = '0755'
   } else {
-    $webhook_service_file     = '/etc/init.d/webhook'
-    $webhook_service_template = 'webhook.init.erb'
+    $webhook_service_file      = '/etc/systemd/system/webhook.service'
+    $webhook_service_template  = 'webhook.service.erb'
+    $webhook_service_file_mode = '0644'
   }
 }

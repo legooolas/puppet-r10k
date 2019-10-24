@@ -147,9 +147,33 @@ _Note: It is recommended you migrate to using the `pe_r10k` module which is basi
 a clone of this modules features and file tickets for anything missing._
 
 
-## Usage
+### Using an internal gem server
 
-Installing using a proxy server
+Create a global gemrc for Puppet Enterprise to add the local gem source. See http://projects.puppetlabs.com/issues/18053#note-12 for more information.
+
+```puppet
+file { '/opt/puppet/etc':
+  ensure => 'directory',
+  owner  => 'root',
+  group  => '0',
+  mode   => '0755',
+}
+
+file { 'gemrc':
+  ensure  => 'file',
+  path    => '/opt/puppet/etc/gemrc',
+  owner   => 'root',
+  group   => '0',
+  mode    => '0644',
+  content => "---\nupdate_sources: true\n:sources:\n- http://your.internal.gem.server.com/rubygems/\n",
+}
+
+class { 'r10k':
+  remote   => 'git@github.com:someuser/puppet.git',
+  provider => 'pe_gem',
+  require  => File['gemrc'],
+}
+```
 
 ### Mcollective Support
 ![alt tag](https://gist.githubusercontent.com/acidprime/7013041/raw/1a99e0a8d28b13bc20b74d2dc4ab60c7e752088c/post_recieve_overview.png)
@@ -201,6 +225,17 @@ mco rpc r10k synchronize -v
 An example post-receive hook is included in the files directory.
 This hook can automatically cause code to synchronize on your
 servers at time of push in git. More modern git systems use webhooks, for  those see below.
+
+#### Passing proxy info through mco
+
+The mcollective agent can be configured to supply r10k/git environment `http_proxy`, `https_proxy` variables via the following example
+
+```puppet
+class { '::r10k::mcollective':
+  http_proxy     => 'http://proxy.example.lan:3128',
+  git_ssl_no_verify => 1,
+}
+```
 
 ### Install mcollective support for post receive hooks
 Install the `mco` command from the puppet enterprise installation directory i.e.
@@ -352,7 +387,7 @@ git_webhook { 'web_post_receive_webhook_for_module' :
 ### Webhook Bitbucket Example
 This is an example of using the webhook with Atlassian Bitbucket (former Stash).
 Requires the `external hooks` addon by https://marketplace.atlassian.com/plugins/com.ngs.stash.externalhooks.external-hooks/server/overview
-and a specific Bitbucket user/pass. 
+and a specific Bitbucket user/pass.
 Remember to place the `stash_mco.rb` on the bitbucket server an make it executable.
 Enable the webhook over the repository settings `External Async Post Receive Hook`:
  - Executable: e.g. `/opt/atlassian/bitbucket-data/external-hooks/stash_mco.rb` (see hook_exe)
@@ -362,9 +397,9 @@ Enable the webhook over the repository settings `External Async Post Receive Hoo
 # Add deploy key
 git_deploy_key { 'add_deploy_key_to_puppet_control':
   ensure       => present,
-  name         => $::fqdn,  
+  name         => $::fqdn,
   path         => '/root/.ssh/id_rsa.pub',
-  username     => 'api', 
+  username     => 'api',
   password     => 'pass',
   project_name => 'project',
   repo_name    => 'puppet',
@@ -382,7 +417,7 @@ git_webhook { 'web_post_receive_webhook' :
   repo_name    => 'puppet',
   server_url   => 'https://git.example.com',
   provider     => 'stash',
-  hook_exe     => '/opt/atlassian/bitbucket-data/external-hooks/stash_mco.rb', 
+  hook_exe     => '/opt/atlassian/bitbucket-data/external-hooks/stash_mco.rb',
 }
 ```
 
@@ -395,6 +430,22 @@ following type of configuration.
 class { 'r10k::webhook::config':
   protected     => false,
   github_secret => 'THISISTHEGITHUBWEBHOOKSECRET',
+}
+
+class { 'r10k::webhook':
+  require => Class['r10k::webhook::config'],
+}
+```
+
+### BitBucket Server Secret Support
+BitBucket webhooks allow the use of a secret value that gets hashed against the payload to pass a
+signature in the request X-Hub-Signature header. To support the secret with the webhook do the
+following type of configuration.
+
+```puppet
+class { 'r10k::webhook::config':
+  protected        => false,
+  bitbucket_secret => 'THISISTHEBITBUCKETWEBHOOKSECRET',
 }
 
 class { 'r10k::webhook':
@@ -520,16 +571,18 @@ class { 'r10k::webhook':
 }
 ```
 
+### Webhook FOSS support using OS Ruby
+Some OS bring r10k as OS installation package. In this case you want to be able to set the ruby interpreter explizitly.
+```puppet
+class { 'r10k::webhook':
+  ruby_bin => '/usr/bin/ruby',
+}
+```
+
 ### Webhook sinatra gem installation
 
-By default, the `r10k::webhook::package` class uses the `puppet_gem` provider to install the latest ruby 2.1 compatible version of sinatra ('~> 1.0').
+By default, the `r10k::webhook::package` class uses the `puppet_gem` provider to install the latest version of sinatra.
 If you are overriding `r10k::webhook::package::provider`, you will also need to override `r10k::webhook::package::sinatra_version`.
-
-### Webhook webrick gem installation
-
-By default, the `r10k::webhook::package` class uses the `puppet_gem` provider to install the webrick gem (version 1.3.1)
-This version is compatible with all ruby version (webrick version 1.4.1 require Ruby version >=2.3.0)
-If you are overriding `r10k::webhook::package::provider`, you may also override `r10k::webhook::package::webrick_version`.
 
 ### Webhook Slack notifications
 
@@ -552,9 +605,12 @@ class { 'r10k::webhook::config':
   slack_webhook   => 'http://slack.webhook/webhook', # mandatory for usage
   slack_channel   => '#channel', # defaults to #default
   slack_username  => 'r10k', # the username to use
-  slack_proxy_url => 'http://proxy.example.com:3128' # Optional.  Defaults to undef.
+  slack_proxy_url => 'http://proxy.example.com:3128', # Optional.  Defaults to undef.
+  slack_icon      => 'unicorn_face' # Optional. Defaults to undef.
 }
 ```
+
+Note that slack icon names should omit the opening and closing colons (`:`).
 
 ### Webhook Rocket.Chat notifications
 
@@ -699,6 +755,12 @@ Deprecated: declare a resource for managing `modulepath` in Puppet.conf
 ##### `manage_ruby_dependency`
 When using system ruby , options on how to declare
 
+##### `proxy`
+A string setting the`r10k.yaml` configuration value of the same name
+
+##### `pool_size`
+Integer defining how many threads should be spawn while updating modules. Only available for r10k >= 3.3.0.
+
 ##### `r10k_basedir`
 This module requires the [puppetlabs-ruby](https://github.com/puppetlabs/puppetlabs-ruby.git) module. In the event that your environment already includes
 the module with some customization, you can use the `manage_ruby_dependency`
@@ -722,15 +784,9 @@ The name of the package to be installed via the provider
 ##### `provider`
 The supported installation modes for this module
 
-* portage
-* yum
 * bundle
 * puppet_gem
 * gem
-* zypper
-
-##### `gentoo_keywords`
-See `r10k::install::portage` class for more information
 
 ##### `install_options`
 Options to pass to the `provider` declaration
