@@ -258,9 +258,9 @@ class Server < Sinatra::Base
         # the other one to complete.
         file.flock(File::LOCK_EX)
 
+        stdout, stderr, exit_status = Open3.capture3(command)
         message = "triggered: #{command}"
-        exec "#{command} &"
-        exit_status = 0
+
         raise "#{stdout}\n#{stderr}" if exit_status != 0
       end
       message
@@ -272,7 +272,7 @@ class Server < Sinatra::Base
 
         message = run_command(command)
         $logger.info("message: #{message} environment: #{environment}")
-        status_message = {:status => :success, :message => message.to_s, :environment => environment, :status_code => 200}
+        status_message = {:status => :success, :message => message.to_s, :environment => environment, :status_code => 202}
         notify_slack(status_message) if slack?
       rescue => e
         $logger.error("message: #{e.message} trace: #{e.backtrace}")
@@ -323,14 +323,14 @@ class Server < Sinatra::Base
         title: "r10k deployment of Puppet environment #{target}"
       }
 
-      case status_message[:status_code]
-      when 200
+      case status_message[:status]
+      when :success
         message.merge!(
           color: "good",
           text: "Successfully deployed #{target}",
           fallback: "Successfully deployed #{target}"
         )
-      when 500
+      when :fail
         message.merge!(
           color: "bad",
           text: "Failed to deploy #{target}",
@@ -370,14 +370,14 @@ class Server < Sinatra::Base
         title: "r10k deployment of Puppet environment #{target}",
       }
 
-      case status_message[:status_code]
-      when 200
+      case status_message[:status]
+      when :success
         attachments.merge!(
           color: "good",
           text: "Successfully deployed #{target}",
           fallback: "Successfully deployed #{target}",
         )
-      when 500
+      when :fail
         attachments.merge!(
           color: "bad",
           text: "Failed to deploy #{target}",
